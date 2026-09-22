@@ -1,0 +1,32 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Shared paths every mod project references. Default assumes a standard
+         Linux Steam install; override it per-machine in Directory.Build.local.props
+         (gitignored) instead of editing this file. -->
+    <GamePath Condition="'$(GamePath)' == ''">$(HOME)/.local/share/Steam/steamapps/common/Graveyard Keeper 2</GamePath>
+  </PropertyGroup>
+
+  <!-- Optional per-machine override, e.g. a custom Steam library location. Never committed. -->
+  <Import Project="Directory.Build.local.props" Condition="Exists('Directory.Build.local.props')" />
+
+  <PropertyGroup>
+    <ManagedPath>$(GamePath)/GraveyardKeeper2_Data/Managed</ManagedPath>
+    <BepInExCorePath>$(GamePath)/BepInEx/core</BepInExCorePath>
+  </PropertyGroup>
+
+  <!-- No PDB / embedded debug info in Release builds: the compiler otherwise bakes
+       the absolute local build path (including your username/home folder) into
+       the shipped DLL's debug directory. -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+</Project>
