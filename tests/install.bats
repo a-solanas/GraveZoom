@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# Tests for install.sh. Run with: bats install.bats
+# Tests for ../install.sh. Run with: bats tests/install.bats (from the repo root)
 #
 # install.sh is sourced (not executed) in every test, which is safe because
 # all of its logic lives inside functions guarded by a `[[ "${BASH_SOURCE[0]}"
@@ -7,7 +7,7 @@
 # functions and variables, nothing runs automatically.
 
 setup() {
-  SCRIPT="$BATS_TEST_DIRNAME/install.sh"
+  SCRIPT="$BATS_TEST_DIRNAME/../install.sh"
   export TEST_HOME="$BATS_TEST_TMPDIR/home"
   mkdir -p "$TEST_HOME"
   export HOME="$TEST_HOME"

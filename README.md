@@ -32,9 +32,12 @@ The game's "Screen Size" setting locks your zoom level to your resolution. For e
 Unzip this into your Graveyard Keeper 2 folder. You should end up with this file:
 `BepInEx/plugins/GraveZoom/GraveZoom.dll`
 
-## Linux (Steam Proton) users
+## Linux / Steam Deck
 
-Add this to the game's Steam launch options, so BepInEx can load:
+Run [`install.sh`](install.sh) from a clone of this repo instead of installing by hand. It finds your Graveyard Keeper 2 install (across any Steam library, including an SD card), installs BepInEx and Configuration Manager if you don't have them yet, and copies Grave Zoom into place.
+
+- **On Steam Deck**, that's it - the script also sets the required Steam launch option for you automatically, since its Steam config is always in the same place.
+- **On other Linux distros**, everything else is automatic, but you still need to set the launch option yourself, since Steam library setups vary too much to do this safely everywhere. Add this to the game's Steam launch options so BepInEx can load:
 
 ```
 WINEDLLOVERRIDES="winhttp=n,b" %command%
