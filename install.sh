@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
-# Grave Zoom installer for Linux / Steam Deck.
+# Grave Zoom installer for Linux / Steam Deck. Standalone - fetches everything
+# it needs from GitHub releases, so it works run directly or piped from curl:
+#   curl -fsSL https://github.com/a-solanas/GraveZoom/releases/latest/download/install.sh | bash
 #
-# Run this script from inside the extracted Grave Zoom package (it expects
-# a sibling "BepInEx/plugins/GraveZoom/GraveZoom.dll" next to itself). It will:
+# It will:
 #   1. Find your Graveyard Keeper 2 install (any Steam library, incl. SD card).
 #   2. Install BepInEx (Mono, x64) if it's not already present.
 #   3. Install BepInEx Configuration Manager (the in-game F1 settings menu) if missing.
-#   4. Copy Grave Zoom into place.
+#   4. Download and install the latest Grave Zoom release.
 #   5. Set up the Steam launch option needed for BepInEx to load under Proton
 #      - automatically on Steam Deck, or printed as instructions elsewhere.
 #
 # Nothing outside your Graveyard Keeper 2 folder is touched, except the one
 # Steam launch-option edit on Steam Deck, which backs up the file it edits first.
 #
-# This file is meant to be both run directly and `source`d by tests (see
-# install.bats) - all logic lives in functions, and nothing executes at
+# This file is meant to be run directly, piped via curl, or `source`d by tests
+# (see install.bats) - all logic lives in functions, and nothing executes at
 # source time except when run as the main script (bottom of the file).
 
 set -euo pipefail
 
 APPID=4358690
 GAME_DIRNAME="Graveyard Keeper 2"
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-BUNDLED_MOD_DIR="$SCRIPT_DIR/BepInEx/plugins/GraveZoom"
 LAUNCH_OPTION='WINEDLLOVERRIDES="winhttp=n,b" %command%'
 
 # Overridable by tests; production code should never set these itself.
@@ -112,6 +111,29 @@ sys.exit(1)
   unzip -q -o "$tmp/configmanager.zip" -d "$game_dir"
   rm -rf "$tmp"
   log "Configuration Manager installed (open with F1 in-game)."
+}
+
+install_gravezoom() {
+  local game_dir="$1"
+  log "Installing Grave Zoom..."
+  local api="https://api.github.com/repos/a-solanas/GraveZoom/releases/latest"
+  local asset_url
+  asset_url="$(curl -fsSL "$api" | python3 -c '
+import json, sys
+rel = json.load(sys.stdin)
+for asset in rel.get("assets", []):
+    name = asset["name"]
+    if name.startswith("GraveZoom-") and name.endswith(".zip"):
+        print(asset["browser_download_url"])
+        sys.exit(0)
+sys.exit(1)
+')" || die "Could not find the latest Grave Zoom release asset."
+
+  local tmp; tmp="$(mktemp -d)"
+  curl -fsSL "$asset_url" -o "$tmp/gravezoom.zip"
+  unzip -q -o "$tmp/gravezoom.zip" -d "$game_dir"
+  rm -rf "$tmp"
+  log "Grave Zoom installed."
 }
 
 # ---------------------------------------------------------------------------
@@ -209,10 +231,6 @@ set_launch_option_steamdeck() {
 # ---------------------------------------------------------------------------
 
 main() {
-  [ -f "$BUNDLED_MOD_DIR/GraveZoom.dll" ] || die \
-    "GraveZoom.dll not found next to this script (expected: $BUNDLED_MOD_DIR/GraveZoom.dll).
-Keep install.sh inside the extracted Grave Zoom package and run it from there."
-
   for tool in curl unzip python3; do
     command -v "$tool" >/dev/null 2>&1 || die "'$tool' is required but not found. Please install it and re-run."
   done
@@ -242,9 +260,7 @@ Run this script again with the install path as an argument, e.g.:
     install_config_manager "$game_dir"
   fi
 
-  log "Installing Grave Zoom..."
-  mkdir -p "$game_dir/BepInEx/plugins/GraveZoom"
-  cp "$BUNDLED_MOD_DIR/GraveZoom.dll" "$game_dir/BepInEx/plugins/GraveZoom/"
+  install_gravezoom "$game_dir"
 
   if is_steam_deck; then
     log "Steam Deck detected, attempting to set the launch option automatically..."
@@ -260,6 +276,6 @@ Run this script again with the install path as an argument, e.g.:
   log "Done. Launch the game once so BepInEx generates its config, then Page Up/Down/Home to zoom."
 }
 
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+if [ "${BASH_SOURCE[0]:-$0}" = "$0" ]; then
   main "$@"
 fi

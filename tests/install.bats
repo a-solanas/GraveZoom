@@ -210,41 +210,59 @@ EOF
 
 # --- main() sanity checks ---------------------------------------------------
 
-@test "main: dies with a clear message when GraveZoom.dll is missing" {
+@test "main: dies with a clear message when required tools are missing" {
   cd "$BATS_TEST_TMPDIR"
-  cp "$SCRIPT" ./install.sh
-  run bash ./install.sh
+  PATH="/nonexistent" run main
   [ "$status" -ne 0 ]
-  [[ "$output" == *"GraveZoom.dll not found"* ]]
+  [[ "$output" == *"required but not found"* ]]
 }
 
 @test "main: dies with a clear message when the given path isn't a game install" {
   cd "$BATS_TEST_TMPDIR"
-  mkdir -p BepInEx/plugins/GraveZoom
-  touch BepInEx/plugins/GraveZoom/GraveZoom.dll
-  cp "$SCRIPT" ./install.sh
   mkdir -p not_the_game
-  run bash ./install.sh ./not_the_game
+  run main ./not_the_game
   [ "$status" -ne 0 ]
   [[ "$output" == *"doesn't look like a Graveyard Keeper 2 install"* ]]
 }
 
-@test "main: accepts an explicit game path and deploys GraveZoom.dll" {
+@test "main: accepts an explicit game path and installs everything, skipping what's present" {
   cd "$BATS_TEST_TMPDIR"
-  mkdir -p BepInEx/plugins/GraveZoom
-  echo "fake dll contents" > BepInEx/plugins/GraveZoom/GraveZoom.dll
-  cp "$SCRIPT" ./install.sh
+
+  # Stub the network-fetching installers so this test never touches the network.
+  install_bepinex() { : ; }
+  install_config_manager() { : ; }
+  install_gravezoom() {
+    mkdir -p "$1/BepInEx/plugins/GraveZoom"
+    echo "fake dll contents" > "$1/BepInEx/plugins/GraveZoom/GraveZoom.dll"
+  }
+  is_steam_deck() { return 1; }
 
   mkdir -p game/BepInEx/core game/BepInEx/plugins/ConfigurationManager
   touch game/GraveyardKeeper2.exe
   touch game/BepInEx/core/BepInEx.dll
   touch game/BepInEx/plugins/ConfigurationManager/ConfigurationManager.dll
 
-  run bash ./install.sh ./game
+  run main ./game
   [ "$status" -eq 0 ]
   [ -f game/BepInEx/plugins/GraveZoom/GraveZoom.dll ]
-  diff BepInEx/plugins/GraveZoom/GraveZoom.dll game/BepInEx/plugins/GraveZoom/GraveZoom.dll
   [[ "$output" == *"BepInEx already installed, skipping."* ]]
   [[ "$output" == *"Configuration Manager already installed, skipping."* ]]
-  [[ "$output" == *"Installing Grave Zoom..."* ]]
+}
+
+@test "main: installs BepInEx and Configuration Manager when missing" {
+  cd "$BATS_TEST_TMPDIR"
+
+  install_bepinex() { mkdir -p "$1/BepInEx/core"; touch "$1/BepInEx/core/BepInEx.dll"; }
+  install_config_manager() { mkdir -p "$1/BepInEx/plugins/ConfigurationManager"; touch "$1/BepInEx/plugins/ConfigurationManager/ConfigurationManager.dll"; }
+  install_gravezoom() { mkdir -p "$1/BepInEx/plugins/GraveZoom"; touch "$1/BepInEx/plugins/GraveZoom/GraveZoom.dll"; }
+  is_steam_deck() { return 1; }
+
+  mkdir -p game
+  touch game/GraveyardKeeper2.exe
+
+  run main ./game
+  [ "$status" -eq 0 ]
+  [ -f game/BepInEx/core/BepInEx.dll ]
+  [ -f game/BepInEx/plugins/ConfigurationManager/ConfigurationManager.dll ]
+  [[ "$output" != *"already installed, skipping"* ]]
 }
