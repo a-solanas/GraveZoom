@@ -3,7 +3,6 @@
   <PropertyGroup>
     <RootNamespace>GraveZoom</RootNamespace>
     <AssemblyName>GraveZoom</AssemblyName>
-    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

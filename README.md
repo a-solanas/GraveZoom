@@ -4,11 +4,13 @@ The game's "Screen Size" setting locks your zoom level to your resolution. For e
 
 ## Hotkeys (default)
 
-| Key | Action |
-| --- | --- |
-| Page Up | Zoom in |
-| Page Down | Zoom out |
-| Home | Reset zoom |
+| Action | Keyboard | Controller |
+| --- | --- | --- |
+| Zoom in | Page Up | RB (R1) |
+| Zoom out | Page Down | LB (L1) |
+| Reset zoom | Home | not set |
+
+The controller buttons are for Xbox-style controllers. Other controllers may number their buttons differently. You can change any of them in the F1 menu (see below).
 
 ## Requirements
 
@@ -25,6 +27,8 @@ The game's "Screen Size" setting locks your zoom level to your resolution. For e
 | MaxZoomPercent | The highest zoom percent allowed. |
 | ZoomStopHeights | The list of resolution heights used to build the preset zoom values. |
 | ZoomIn / ZoomOut / ResetZoom | The three hotkeys. You can change them here. |
+| ZoomInButton / ZoomOutButton / ResetZoomButton | The controller buttons for the same three actions. RB zooms in and LB zooms out by default, reset is not set. Click the setting, then press a button on your controller to bind it (Clear turns it off). |
+| DisableInMenus (Gamepad) | On by default. The controller buttons do nothing while a game menu is open (for example crafting), so RB and LB do not clash with menu controls. The keyboard keys still work. |
 | ShowZoomIndicator | Turns the on-screen zoom readout on or off. |
 
 ## Install
@@ -48,3 +52,30 @@ curl -fsSL https://github.com/a-solanas/GraveZoom/releases/latest/download/insta
 ```
 WINEDLLOVERRIDES="winhttp=n,b" %command%
 ```
+
+## Building from source
+
+You need the .NET SDK and Graveyard Keeper 2 with BepInEx already installed. The build reads game DLLs from your game folder.
+
+By default, the build looks in `$(HOME)/.local/share/Steam/steamapps/common/Graveyard Keeper 2` (Linux Steam path). If your game is elsewhere, or you use Windows, create a file named `Directory.Build.local.props` in the repo root (it is git-ignored):
+
+```
+<Project>
+  <PropertyGroup>
+    <GamePath>C:\path\to\Graveyard Keeper 2</GamePath>
+  </PropertyGroup>
+</Project>
+```
+
+Replace `C:\path\to\Graveyard Keeper 2` with your actual game folder path.
+
+Build with:
+```
+dotnet build GraveZoom/GraveZoom.csproj -c Release
+```
+
+The DLL is in `GraveZoom/bin/Release/GraveZoom.dll`. Copy it to `BepInEx/plugins/GraveZoom/` in your game folder.
+
+To run tests:
+- `bats tests/install.bats` - tests the install script (needs bats)
+- `dotnet test tests/GraveZoom.Tests` - tests the C# logic
