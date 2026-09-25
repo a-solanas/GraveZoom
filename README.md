@@ -31,10 +31,19 @@ You can use buttons and triggers (L2/R2, LT/RT, ZL/ZR). Controllers are read thr
 | DisableInMenus (Gamepad) | On by default. The controller buttons do nothing while a game menu is open (for example crafting), so they do not clash with menu controls. The keyboard keys still work. |
 | ShowZoomIndicator | Turns the on-screen zoom readout on or off. |
 
+### Optional: GK2 Mod Framework
+
+If you use [GK2 Mod Framework](https://www.nexusmods.com/graveyardkeeper2/mods/42), Grave Zoom also shows up in its **Mods** menu (main menu and pause menu). There you can change the current zoom, the keyboard keys, "ignore controller in menus" and the on-screen readout, and you can turn Grave Zoom off for the next start with **Disable after restart**. The controller buttons are shown there too. With the current framework version they can only be changed in the F1 menu. The advanced settings (zoom limits and zoom steps) are also only in the F1 menu.
+
+Controller navigation inside the framework's settings page is limited in the current framework version (0.1.12). It works with mouse and keyboard.
+
+You do not need the framework. Without it, Grave Zoom works exactly the same and the F1 menu still works. The BepInEx log then has one info line saying Grave Zoom is using the F1 menu. That is normal.
+
 ## Install
 
-Unzip this into your Graveyard Keeper 2 folder. You should end up with this file:
-`BepInEx/plugins/GraveZoom/GraveZoom.dll`
+Unzip this into your Graveyard Keeper 2 folder. You should end up with these files:
+- `BepInEx/plugins/GraveZoom/GraveZoom.dll`
+- `BepInEx/plugins/GraveZoom/GraveZoom.Framework.dll` (only used if you have GK2 Mod Framework)
 
 ## Linux / Steam Deck
 
@@ -75,6 +84,12 @@ dotnet build GraveZoom/GraveZoom.csproj -c Release
 ```
 
 The DLL is in `GraveZoom/bin/Release/GraveZoom.dll`. Copy it to `BepInEx/plugins/GraveZoom/` in your game folder.
+
+The optional GK2 Mod Framework plugin is a separate project. To build it you need a copy of `GK2.Framework.dll`. By default the build looks for it in `BepInEx/plugins/` of your game folder. If it is somewhere else, set `FrameworkDll` in your `Directory.Build.local.props` the same way as `GamePath`.
+```
+dotnet build GraveZoom.Framework/GraveZoom.Framework.csproj -c Release
+```
+Copy `GraveZoom.Framework/bin/Release/GraveZoom.Framework.dll` next to `GraveZoom.dll`. The main mod never uses the framework, so you can skip this project.
 
 To run tests:
 - `bats tests/install.bats` - tests the install script (needs bats)

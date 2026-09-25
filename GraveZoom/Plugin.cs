@@ -1,5 +1,6 @@
 using System;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -13,7 +14,10 @@ namespace GraveZoom
     {
         public const string PluginGuid = "com.gravezoom.mod";
         public const string PluginName = "Grave Zoom";
-        public const string PluginVersion = "1.2.2";
+        public const string PluginVersion = "1.3.0";
+
+        // Only the GUID text; the framework itself is never referenced from this plugin.
+        private const string FrameworkGuid = "ru.superman4eg.gk2.framework";
 
         internal static ManualLogSource Log;
         internal static ConfigEntry<float> ZoomFactor;
@@ -33,6 +37,18 @@ namespace GraveZoom
         private void Awake()
         {
             Log = Logger;
+
+            // Same section, key and type that GK2 Mod Framework's "Disable after restart" button uses,
+            // so the button switches this on and off. Hidden from F1: without the framework, just remove the DLL.
+            ConfigEntry<bool> modEnabled = Config.Bind("Framework", "Enabled", true,
+                new ConfigDescription("Enable this mod on game startup.", null,
+                    new ConfigurationManagerAttributes { Browsable = false }));
+            if (!modEnabled.Value)
+            {
+                Logger.LogInfo($"{PluginName} is turned off in the GK2 Mods menu. Turn it on there and restart the game.");
+                enabled = false;
+                return;
+            }
 
             // Ranges keep hand-typed values from breaking the camera or stalling the stop builder.
             MinZoomPercent = Config.Bind("Zoom", "MinZoomPercent", 25f,
@@ -83,6 +99,15 @@ namespace GraveZoom
             }
 
             Logger.LogInfo($"{PluginName} v{PluginVersion} loaded.");
+        }
+
+        // Start runs after every plugin has loaded, so the framework's presence is known here.
+        private void Start()
+        {
+            if (!Chainloader.PluginInfos.ContainsKey(FrameworkGuid))
+            {
+                Logger.LogInfo($"{PluginName}: GK2 Mod Framework is not installed, falling back to the BepInEx (F1) settings menu.");
+            }
         }
 
         private HotkeyBinding BindHotkey(string name, KeyCode defaultKey, string defaultButton, string description, Action action)

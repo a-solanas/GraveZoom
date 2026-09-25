@@ -3,6 +3,7 @@
 #pragma warning disable 0169, 0414, 0649
 internal sealed class ConfigurationManagerAttributes
 {
+    public bool? Browsable;
     public CustomHotkeyDrawerFunc CustomHotkeyDrawer;
 
     public delegate void CustomHotkeyDrawerFunc(BepInEx.Configuration.ConfigEntryBase setting, ref bool isCurrentlyAcceptingInput);

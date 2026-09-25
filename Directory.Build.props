@@ -19,6 +19,9 @@
   <PropertyGroup>
     <ManagedPath>$(GamePath)/GraveyardKeeper2_Data/Managed</ManagedPath>
     <BepInExCorePath>$(GamePath)/BepInEx/core</BepInExCorePath>
+    <!-- Only the optional GK2 Mod Framework bridge needs this. Not committed: build it
+         against your own copy of the framework (set FrameworkDll in Directory.Build.local.props). -->
+    <FrameworkDll Condition="'$(FrameworkDll)' == ''">$(GamePath)/BepInEx/plugins/GK2.Framework.dll</FrameworkDll>
   </PropertyGroup>
 
   <!-- No PDB / embedded debug info in Release builds: the compiler otherwise bakes

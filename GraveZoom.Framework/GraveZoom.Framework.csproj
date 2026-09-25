@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- GK2.Framework.dll targets .NET Standard 2.1, so the bridge does too. -->
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>GraveZoom.FrameworkBridge</RootNamespace>
+    <AssemblyName>GraveZoom.Framework</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCorePath)/BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="GK2.Framework">
+      <HintPath>$(FrameworkDll)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>$(ManagedPath)/Rewired_Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedPath)/UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- Shared controller code: the binding text parser and the Rewired reader used to rebind buttons. -->
+    <Compile Include="../GraveZoom/ControllerBinding.cs" Link="ControllerBinding.cs" />
+    <Compile Include="../GraveZoom/GamepadInput.cs" Link="GamepadInput.cs" />
+  </ItemGroup>
+
+</Project>
