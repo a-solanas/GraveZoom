@@ -1,6 +1,7 @@
 using System;
 using BepInEx;
 using BepInEx.Configuration;
+using BepInEx.Logging;
 using HarmonyLib;
 using LazyBearTechnology;
 using UnityEngine;
@@ -12,8 +13,9 @@ namespace GraveZoom
     {
         public const string PluginGuid = "com.gravezoom.mod";
         public const string PluginName = "Grave Zoom";
-        public const string PluginVersion = "1.2.1";
+        public const string PluginVersion = "1.2.2";
 
+        internal static ManualLogSource Log;
         internal static ConfigEntry<float> ZoomFactor;
         internal static ConfigEntry<float> MinZoomPercent;
         internal static ConfigEntry<float> MaxZoomPercent;
@@ -30,6 +32,8 @@ namespace GraveZoom
 
         private void Awake()
         {
+            Log = Logger;
+
             // Ranges keep hand-typed values from breaking the camera or stalling the stop builder.
             MinZoomPercent = Config.Bind("Zoom", "MinZoomPercent", 25f,
                 new ConfigDescription("Smallest zoom percent allowed.", new AcceptableValueRange<float>(10f, 100f)));
@@ -53,9 +57,9 @@ namespace GraveZoom
 
             bindings = new[]
             {
-                BindHotkey("ZoomIn", KeyCode.PageUp, KeyCode.JoystickButton5, "Zoom in.", ZoomController.StepUp),
-                BindHotkey("ZoomOut", KeyCode.PageDown, KeyCode.JoystickButton4, "Zoom out.", ZoomController.StepDown),
-                BindHotkey("ResetZoom", KeyCode.Home, KeyCode.None, "Reset zoom to default.", ZoomController.ResetToDefault),
+                BindHotkey("ZoomIn", KeyCode.PageUp, "Axis:Right Trigger:+", "Zoom in.", ZoomController.StepUp),
+                BindHotkey("ZoomOut", KeyCode.PageDown, "Axis:Left Trigger:+", "Zoom out.", ZoomController.StepDown),
+                BindHotkey("ResetZoom", KeyCode.Home, "None", "Reset zoom to default.", ZoomController.ResetToDefault),
             };
 
             ZoomFactor.SettingChanged += (_, __) =>
@@ -81,11 +85,11 @@ namespace GraveZoom
             Logger.LogInfo($"{PluginName} v{PluginVersion} loaded.");
         }
 
-        private HotkeyBinding BindHotkey(string name, KeyCode defaultKey, KeyCode defaultButton, string description, Action action)
+        private HotkeyBinding BindHotkey(string name, KeyCode defaultKey, string defaultButton, string description, Action action)
         {
             ConfigEntry<KeyboardShortcut> key = Config.Bind("Hotkeys", name, new KeyboardShortcut(defaultKey), description);
-            ConfigEntry<KeyCode> button = Config.Bind("Gamepad", name + "Button", defaultButton,
-                new ConfigDescription("Controller button for this action. Click it, then press a button.", null,
+            ConfigEntry<string> button = Config.Bind("Gamepad", name + "Button", defaultButton,
+                new ConfigDescription("Controller button or trigger for this action. Click it, then press a button or pull a trigger.", null,
                     new ConfigurationManagerAttributes { CustomHotkeyDrawer = GamepadButtonDrawer.Draw }));
             return new HotkeyBinding(key, button, action);
         }
@@ -107,11 +111,12 @@ namespace GraveZoom
         private sealed class HotkeyBinding
         {
             private readonly ConfigEntry<KeyboardShortcut> key;
-            private readonly ConfigEntry<KeyCode> button;
+            private readonly ConfigEntry<string> button;
+            private readonly GamepadTrigger trigger = new GamepadTrigger();
 
             public readonly Action Action;
 
-            public HotkeyBinding(ConfigEntry<KeyboardShortcut> key, ConfigEntry<KeyCode> button, Action action)
+            public HotkeyBinding(ConfigEntry<KeyboardShortcut> key, ConfigEntry<string> button, Action action)
             {
                 this.key = key;
                 this.button = button;
@@ -120,8 +125,7 @@ namespace GraveZoom
 
             public bool IsPressed(bool gamepadEnabled)
             {
-                KeyCode gamepad = button.Value;
-                return key.Value.IsDown() || (gamepadEnabled && gamepad != KeyCode.None && UnityInput.Current.GetKeyDown(gamepad));
+                return key.Value.IsDown() || (gamepadEnabled && trigger.IsPressed(button.Value));
             }
         }
 

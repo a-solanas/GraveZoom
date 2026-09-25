@@ -25,6 +25,10 @@
       <HintPath>$(ManagedPath)/LazyBearTechnology.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Rewired_Core">
+      <HintPath>$(ManagedPath)/Rewired_Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
     <!-- Unity engine modules -->
     <Reference Include="UnityEngine">

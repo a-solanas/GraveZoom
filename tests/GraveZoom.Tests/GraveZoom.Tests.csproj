@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsTestProject>true</IsTestProject>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Compile Include="../../GraveZoom/ZoomMath.cs" Link="ZoomMath.cs" />
+    <Compile Include="../../GraveZoom/ControllerBinding.cs" Link="ControllerBinding.cs" />
   </ItemGroup>
 
 </Project>

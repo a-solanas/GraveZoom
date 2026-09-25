@@ -1,42 +1,25 @@
-using System;
-using System.Linq;
-using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
 
 namespace GraveZoom
 {
-    // Click-to-bind editor for controller buttons in the F1 menu. Detection mirrors
-    // ConfigurationManager's own "Set..." capture (every supported key code, on release),
-    // limited to joystick codes so a stray keyboard press can't be bound by accident.
+    // Click-to-bind editor for controller buttons and triggers in the F1 menu.
+    // The binding is saved as text (see ControllerBinding), shown with the controller's own names.
     internal static class GamepadButtonDrawer
     {
-        private static KeyCode[] joystickKeys;
-
         public static void Draw(ConfigEntryBase setting, ref bool isEditing)
         {
-            ConfigEntry<KeyCode> entry = (ConfigEntry<KeyCode>)setting;
+            ConfigEntry<string> entry = (ConfigEntry<string>)setting;
 
             if (isEditing)
             {
-                GUILayout.Label("Press a controller button", GUILayout.ExpandWidth(true));
+                GUILayout.Label("Press a button or pull a trigger", GUILayout.ExpandWidth(true));
                 GUIUtility.keyboardControl = -1;
 
-                if (joystickKeys == null)
+                if (GamepadInput.TryCapture(out ControllerBinding captured))
                 {
-                    joystickKeys = UnityInput.Current.SupportedKeyCodes
-                        .Where(k => k.ToString().StartsWith("Joystick", StringComparison.Ordinal))
-                        .ToArray();
-                }
-
-                foreach (KeyCode key in joystickKeys)
-                {
-                    if (UnityInput.Current.GetKeyUp(key))
-                    {
-                        entry.Value = key;
-                        isEditing = false;
-                        break;
-                    }
+                    entry.Value = captured.ToString();
+                    isEditing = false;
                 }
 
                 if (GUILayout.Button("Cancel", GUILayout.ExpandWidth(false)))
@@ -46,15 +29,14 @@ namespace GraveZoom
             }
             else
             {
-                string label = entry.Value == KeyCode.None ? "Not set (click to bind)" : entry.Value.ToString();
-                if (GUILayout.Button(label, GUILayout.ExpandWidth(true)))
+                if (GUILayout.Button(GamepadInput.Describe(ControllerBinding.Parse(entry.Value)), GUILayout.ExpandWidth(true)))
                 {
                     isEditing = true;
                 }
 
                 if (GUILayout.Button("Clear", GUILayout.ExpandWidth(false)))
                 {
-                    entry.Value = KeyCode.None;
+                    entry.Value = ControllerBinding.None.ToString();
                 }
             }
         }

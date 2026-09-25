@@ -6,11 +6,11 @@ The game's "Screen Size" setting locks your zoom level to your resolution. For e
 
 | Action | Keyboard | Controller |
 | --- | --- | --- |
-| Zoom in | Page Up | RB (R1) |
-| Zoom out | Page Down | LB (L1) |
+| Zoom in | Page Up | Right trigger (R2) |
+| Zoom out | Page Down | Left trigger (L2) |
 | Reset zoom | Home | not set |
 
-The controller buttons are for Xbox-style controllers. Other controllers may number their buttons differently. You can change any of them in the F1 menu (see below).
+You can use buttons and triggers (L2/R2, LT/RT, ZL/ZR). Controllers are read through the game's own input system, so buttons are found by name and shown with the names on your controller (for example "Square" on a PlayStation controller, or "B" on an Xbox controller). By default the right trigger zooms in and the left trigger zooms out (R2 and L2 on a PlayStation controller, ZR and ZL on a Switch Pro controller). You can change any of them in the F1 menu (see below). The D-pad is not supported yet.
 
 ## Requirements
 
@@ -27,8 +27,8 @@ The controller buttons are for Xbox-style controllers. Other controllers may num
 | MaxZoomPercent | The highest zoom percent allowed. |
 | ZoomStopHeights | The list of resolution heights used to build the preset zoom values. |
 | ZoomIn / ZoomOut / ResetZoom | The three hotkeys. You can change them here. |
-| ZoomInButton / ZoomOutButton / ResetZoomButton | The controller buttons for the same three actions. RB zooms in and LB zooms out by default, reset is not set. Click the setting, then press a button on your controller to bind it (Clear turns it off). |
-| DisableInMenus (Gamepad) | On by default. The controller buttons do nothing while a game menu is open (for example crafting), so RB and LB do not clash with menu controls. The keyboard keys still work. |
+| ZoomInButton / ZoomOutButton / ResetZoomButton | The controller buttons for the same three actions. The right trigger zooms in and the left trigger zooms out by default, reset is not set. Click the setting, then press a button or pull a trigger on your controller to bind it (Clear turns it off). If you upgraded from an older version, your old buttons still work. Click the setting and press the button again to get the new names. |
+| DisableInMenus (Gamepad) | On by default. The controller buttons do nothing while a game menu is open (for example crafting), so they do not clash with menu controls. The keyboard keys still work. |
 | ShowZoomIndicator | Turns the on-screen zoom readout on or off. |
 
 ## Install
