@@ -39,7 +39,7 @@ namespace GraveZoom.FrameworkBridge
         public const string FrameworkGuid = "ru.superman4eg.gk2.framework";
         public const string PluginGuid = "com.gravezoom.mod.framework";
         public const string PluginName = "Grave Zoom - GK2 Framework Integration";
-        public const string PluginVersion = "1.3.0";
+        public const string PluginVersion = "1.3.1";
 
         private const float CaptureTimeoutSeconds = 8f;
 

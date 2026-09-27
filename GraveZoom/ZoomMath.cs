@@ -117,6 +117,15 @@ namespace GraveZoom
             return NativePercent / zoomPercent;
         }
 
+        // The game announces the current resolution every time it starts, even when it has not
+        // actually changed, so a plain string compare is what tells a real change from that noise.
+        public static string FormatResolution(int width, int height) => width + "x" + height;
+
+        public static bool IsRealResolutionChange(string previousResolution, string currentResolution)
+        {
+            return !string.IsNullOrEmpty(previousResolution) && previousResolution != currentResolution;
+        }
+
         public static List<int> ParseHeights(string csv)
         {
             if (string.IsNullOrEmpty(csv))

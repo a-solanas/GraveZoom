@@ -14,7 +14,7 @@ namespace GraveZoom
     {
         public const string PluginGuid = "com.gravezoom.mod";
         public const string PluginName = "Grave Zoom";
-        public const string PluginVersion = "1.3.0";
+        public const string PluginVersion = "1.3.1";
 
         // Only the GUID text; the framework itself is never referenced from this plugin.
         private const string FrameworkGuid = "ru.superman4eg.gk2.framework";
@@ -30,6 +30,8 @@ namespace GraveZoom
 
         private ConfigEntry<bool> showIndicator;
         private ConfigEntry<bool> disableGamepadInMenus;
+        private ConfigEntry<bool> rememberZoom;
+        private ConfigEntry<string> lastKnownResolution;
         private HotkeyBinding[] bindings;
         private GUIStyle indicatorStyle;
         private float indicatorHideTime = float.NegativeInfinity;
@@ -71,6 +73,14 @@ namespace GraveZoom
             disableGamepadInMenus = Config.Bind("Gamepad", "DisableInMenus", true,
                 "Ignore the controller buttons while a game menu or window is open (for example crafting). The keyboard keys still work.");
 
+            rememberZoom = Config.Bind("Zoom", "RememberZoom", true,
+                "Keep your last zoom after the screen resolution changes. Turn this off to reset to native zoom (100%) whenever the resolution changes.");
+
+            // Bookkeeping only, not a setting: the resolution seen last time, so the game announcing
+            // the same resolution again at startup is not mistaken for the player actually changing it.
+            lastKnownResolution = Config.Bind("Zoom", "LastKnownResolution", "",
+                new ConfigDescription("Internal.", null, new ConfigurationManagerAttributes { Browsable = false }));
+
             bindings = new[]
             {
                 BindHotkey("ZoomIn", KeyCode.PageUp, "Axis:Right Trigger:+", "Zoom in.", ZoomController.StepUp),
@@ -84,8 +94,7 @@ namespace GraveZoom
                 ZoomController.Reapply();
             };
 
-            // Zoom is relative to native, so a new resolution starts from native again.
-            GameSettings.OnResolutionChanged += _ => ZoomController.ResetToDefault();
+            GameSettings.OnResolutionChanged += HandleResolutionChanged;
 
             try
             {
@@ -107,6 +116,20 @@ namespace GraveZoom
             if (!Chainloader.PluginInfos.ContainsKey(FrameworkGuid))
             {
                 Logger.LogInfo($"{PluginName}: GK2 Mod Framework is not installed, falling back to the BepInEx (F1) settings menu.");
+            }
+        }
+
+        // The game reports the current resolution every time it starts, even when it has not
+        // actually changed, so only a real change should reset the zoom (see ZoomMath).
+        private void HandleResolutionChanged(IntVector2 resolution)
+        {
+            string current = ZoomMath.FormatResolution(resolution.x, resolution.y);
+            bool realChange = ZoomMath.IsRealResolutionChange(lastKnownResolution.Value, current);
+            lastKnownResolution.Value = current;
+
+            if (realChange && !rememberZoom.Value)
+            {
+                ZoomController.ResetToDefault();
             }
         }
 

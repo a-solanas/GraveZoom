@@ -9,10 +9,10 @@ The game's "Screen Size" setting locks your zoom level to your resolution. For e
 - On-screen indicator that briefly shows the current zoom value after each change
 [img]https://staticdelivery.nexusmods.com/mods/10208/images/55/55-1790110380-1845480996.png[/img]
 - Optional in-game settings menu (via BepInEx Configuration Manager) to change any setting or rebind keys and controller buttons, without editing any file
-- Optional support for GK2 Mod Framework: Grave Zoom shows up in its Mods menu and can be turned off there
+- Optional support for GK2 Mod Framework
 
 [color=#f1c232][size=5][b]Hotkeys (default)[/b][/size][/color]
-[color=#ffffff][size=3][b]Now supports controllers[/b][/size][/color]
+[color=#ffffff][b]Now supports controllers[/b][/color]
 - Page Up: Zoom in. Controller: right trigger (RT / R2 / ZR)
 - Page Down: Zoom out. Controller: left trigger (LT / L2 / ZL)
 - Home: Reset zoom. Controller: not set
@@ -25,11 +25,10 @@ BepInEx/plugins/GraveZoom/GraveZoom.dll
 BepInEx/plugins/GraveZoom/GraveZoom.Framework.dll (only used if you have GK2 Mod Framework)
 
 [color=#f1c232][size=5][b]Requirements[/b][/size][/color]
-BepInEx (Mono, x64). Tested with version 5.4.23.5, but any up-to-date BepInEx 5 (Mono) build should work.
-https://github.com/BepInEx/BepInEx/releases
+BepInEx. Tested with version 5.4.23.5, but any up-to-date BepInEx 5 (build should work.
 
-[color=#f1c232][size=5][b]Optional: BepInEx Configuration Manager[/b][/size][/color]
-https://github.com/BepInEx/BepInEx.ConfigurationManager
+
+[color=#f1c232][size=5][b]Optional: [url=https://github.com/BepInEx/BepInEx.ConfigurationManager]BepInEx Configuration Manager[/url][/b][/size][/color]
 Adds a settings menu you can open in game by pressing F1. From there you can change any setting below, or rebind the hotkeys, without editing any file.
 
 Settings available there:
@@ -38,6 +37,7 @@ Settings available there:
 - MaxZoomPercent: the highest zoom percent allowed.
 - ZoomStopHeights: the list of resolution heights used to build the preset zoom values.
 - ZoomFallbackStepPercent: adds extra evenly spaced zoom values, so you can always zoom in or out. 0 turns this off.
+- RememberZoom: on by default. Keeps your last zoom after your screen resolution changes. Turn it off to reset to native zoom whenever the resolution changes.
 - ZoomIn / ZoomOut / ResetZoom: the three hotkeys. You can change them here.
 - ZoomInButton / ZoomOutButton / ResetZoomButton: the controller buttons for the same actions. Click the setting, then press a button or pull a trigger on your controller to bind it (Clear turns it off).
 - DisableInMenus (Gamepad): on by default. The controller buttons do nothing while a game menu is open (for example crafting), so they do not clash with menu controls. The keyboard keys still work. Turn it off if you want the controller zoom to work in menus too.
@@ -46,10 +46,7 @@ Settings available there:
 [img]https://staticdelivery.nexusmods.com/mods/10208/images/55/55-1790174180-532281385.png[/img]
 
 [color=#f1c232][size=5][b]Optional: GK2 Mod Framework[/b][/size][/color]
-https://www.nexusmods.com/graveyardkeeper2/mods/42
-If you use GK2 Mod Framework, Grave Zoom also shows up in its Mods menu (main menu and pause menu). There you can change the current zoom, the keyboard keys, "ignore controller in menus" and the on-screen readout, and you can turn Grave Zoom off for the next start with "Disable after restart". The controller buttons are shown there too, but with the current framework version they can only be changed in the F1 menu. The advanced settings (zoom limits and zoom steps) are also only in the F1 menu.
-Controller navigation inside the framework's settings page is limited in the current framework version (0.1.12). It works with mouse and keyboard.
-You do not need the framework. Without it, Grave Zoom works exactly the same and the F1 menu still works. The BepInEx log then has one info line saying Grave Zoom is using the F1 menu. That is normal.
+If you use [url=https://www.nexusmods.com/graveyardkeeper2/mods/42]GK2 Mod Framework[/url], Grave Zoom also shows up in its Mods menu (main menu and pause menu).
 
 [color=#f1c232][size=5][b]Linux (Steam Proton) users[/b][/size][/color]
 Add this to the game's Steam launch options so BepInEx can load:

@@ -45,6 +45,9 @@ namespace GraveZoom.FrameworkBridge
 
                 settings.AddFloatSlider("Zoom", "ZoomFactor", 100f, 10f, 1000f,
                     "Zoom", "Current zoom percent. 100 = native. Higher = more zoomed in.", step: 1f);
+                settings.AddToggle("Zoom", "RememberZoom", true,
+                    "Remember zoom",
+                    "Keep your last zoom after the screen resolution changes. Turn this off to reset to native zoom whenever the resolution changes.");
 
                 settings.AddKeybind("Hotkeys", "ZoomIn", new KeyboardShortcut(KeyCode.PageUp),
                     "Zoom in key", "Zoom in.");

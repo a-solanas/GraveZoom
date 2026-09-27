@@ -19,7 +19,8 @@ Working notes about how the mod is designed and how to work on it. The README co
 - The game computes the camera size in `CameraSystem.CalculateOrthographicSize` (vanilla = `height / (100 * pixelSize)`). Its only caller is `CameraSystem.OnResolutionChanged`.
 - A Harmony postfix (`CameraSystemPatches.cs`) multiplies the result by `ZoomMath.OrthoScale(zoom)` = `100 / zoom`. No game DLL is modified.
 - `ZoomController.Reapply()` re-runs `OnResolutionChanged` so a change shows immediately.
-- Zoom is a percent: 100 = native, larger = zoomed in. `ZoomFactor` is saved in the config. It is reset to 100 when the real resolution changes (`GameSettings.OnResolutionChanged`). Values are clamped to Min/MaxZoomPercent.
+- Zoom is a percent: 100 = native, larger = zoomed in. `ZoomFactor` is saved in the config. Values are clamped to Min/MaxZoomPercent.
+- `GameSettings.OnResolutionChanged` fires every time the game starts, even when the resolution has not actually changed (it comes from `ApplySettings()`, called during game bootstrap). `Plugin.HandleResolutionChanged` only treats it as a real change when the resolution text differs from the one remembered last time (`ZoomMath.IsRealResolutionChange`, hidden config entry `LastKnownResolution`). On a real change, zoom resets to 100 unless `RememberZoom` (default on) is set, in which case the last zoom is kept. Get this wrong and the persisted zoom is silently wiped on every launch, which is what version 1.3.1 fixed.
 - Zoom steps (`ZoomMath.BuildStops`): 100, min, max, and for each height in `ZoomStopHeights` the value `round(100 * nativeHeight / refHeight)`, plus an evenly spaced fallback grid (`ZoomFallbackStepPercent`) so zoom in/out never gets stuck (for example at 2160p there is no preset below 100). `StepTolerance` (0.01) stops float noise from making a step do nothing.
 - Keep `ZoomMath` and `ControllerBinding` pure (no Unity types) so the tests can link them.
 

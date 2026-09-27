@@ -26,6 +26,7 @@ You can use buttons and triggers (L2/R2, LT/RT, ZL/ZR). Controllers are read thr
 | MinZoomPercent | The lowest zoom percent allowed. |
 | MaxZoomPercent | The highest zoom percent allowed. |
 | ZoomStopHeights | The list of resolution heights used to build the preset zoom values. |
+| RememberZoom | On by default. Keeps your last zoom after your screen resolution changes. Turn it off to reset to native zoom (100%) whenever the resolution changes. |
 | ZoomIn / ZoomOut / ResetZoom | The three hotkeys. You can change them here. |
 | ZoomInButton / ZoomOutButton / ResetZoomButton | The controller buttons for the same three actions. The right trigger zooms in and the left trigger zooms out by default, reset is not set. Click the setting, then press a button or pull a trigger on your controller to bind it (Clear turns it off). If you upgraded from an older version, your old buttons still work. Click the setting and press the button again to get the new names. |
 | DisableInMenus (Gamepad) | On by default. The controller buttons do nothing while a game menu is open (for example crafting), so they do not clash with menu controls. The keyboard keys still work. |
@@ -33,7 +34,7 @@ You can use buttons and triggers (L2/R2, LT/RT, ZL/ZR). Controllers are read thr
 
 ### Optional: GK2 Mod Framework
 
-If you use [GK2 Mod Framework](https://www.nexusmods.com/graveyardkeeper2/mods/42), Grave Zoom also shows up in its **Mods** menu (main menu and pause menu). There you can change the current zoom, the keyboard keys, "ignore controller in menus" and the on-screen readout, and you can turn Grave Zoom off for the next start with **Disable after restart**. The controller buttons are shown there too. With the current framework version they can only be changed in the F1 menu. The advanced settings (zoom limits and zoom steps) are also only in the F1 menu.
+If you use [GK2 Mod Framework](https://www.nexusmods.com/graveyardkeeper2/mods/42), Grave Zoom also shows up in its **Mods** menu (main menu and pause menu). There you can change the current zoom, "remember zoom", the keyboard keys, "ignore controller in menus" and the on-screen readout, and you can turn Grave Zoom off for the next start with **Disable after restart**. The controller buttons are shown there too. With the current framework version they can only be changed in the F1 menu. The advanced settings (zoom limits and zoom steps) are also only in the F1 menu.
 
 Controller navigation inside the framework's settings page is limited in the current framework version (0.1.12). It works with mouse and keyboard.
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Your zoom is now remembered across restarts by default (new RememberZoom setting; it also fixes a bug where zoom silently reset to native on every game launch).
+
 ## 1.3.0
 
 - Grave Zoom now supports integration with GK2 Mod Framework.

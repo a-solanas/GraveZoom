@@ -306,4 +306,31 @@ public class ZoomMathTests
 
         Assert.Contains(ZoomMath.NativePercent, stops);
     }
+
+    [Fact]
+    public void FormatResolution_ReturnsWidthByHeight()
+    {
+        Assert.Equal("2560x1440", ZoomMath.FormatResolution(2560, 1440));
+    }
+
+    [Fact]
+    public void IsRealResolutionChange_FirstEverRun_IsNotARealChange()
+    {
+        // The game announces its resolution at startup too; with nothing remembered yet, that must
+        // not be treated as the player having changed anything.
+        Assert.False(ZoomMath.IsRealResolutionChange("", "1920x1080"));
+    }
+
+    [Fact]
+    public void IsRealResolutionChange_SameResolutionAgain_IsNotARealChange()
+    {
+        // Regression: the game re-announces the same resolution every time it starts.
+        Assert.False(ZoomMath.IsRealResolutionChange("1920x1080", "1920x1080"));
+    }
+
+    [Fact]
+    public void IsRealResolutionChange_DifferentResolution_IsARealChange()
+    {
+        Assert.True(ZoomMath.IsRealResolutionChange("1920x1080", "2560x1440"));
+    }
 }
